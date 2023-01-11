@@ -1,4 +1,5 @@
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.dispatcher.filters import Text
 import datetime
 import recipe_model
 
@@ -40,35 +41,37 @@ async def get_answer():
 
 
 @dp.message_handler(commands=["start", "help"])
-async def get_help(message):
-    await message.answer("Напишите \"хочу рецепт\" или просто \"рецепт\" для генерации рецепта")
+async def get_help(message:types.Message):
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=[[types.KeyboardButton(text="Рецепт")],],
+        resize_keyboard=True,
+        input_field_placeholder="Я вас люблю"
+    )
+    await message.answer("Напишите \"рецепт\" для генерации рецепта", reply_markup=keyboard)
 
-@dp.message_handler(content_types=['text'])
-async def get_messages(message):
+@dp.message_handler(lambda message: message.text.lower() == "рецепт")
+async def get_messages(message:types.Message):
     check_context_uptime()
 
-    message_text = message.text.lower()
+    last_command_use_time = check_id_in_context(message.from_user.id)
     
-    if message_text == "хочу рецепт" or message_text == "рецепт":
-        last_command_use_time = check_id_in_context(message.from_user.id)
+    if (datetime.datetime.now() - last_command_use_time).seconds > COOLDOWN:
+        context[message.from_user.id] = datetime.datetime.now()
         
-        if (datetime.datetime.now() - last_command_use_time).seconds > COOLDOWN:
-            context[message.from_user.id] = datetime.datetime.now()
-            
+        try:
             await message.answer("Ваш рецепт генерируется...")
             
-            try:
-                received_answer = await get_answer()
-                for x in range(0, len(received_answer), 4096):
-                    await message.answer(received_answer[x:x+4096])
-            except:
-                context[message.from_user.id] = DEFAULT_DATE
-                await message.answer("Произошла какая-то ошибка!\nПожалуйста, пробуйте снова")
-            
-        else:
-            await message.answer("Пожалуйста, пожалейте сервер!\nПерерыв между запросами "\
-            + str(COOLDOWN) + " секунд\nМожно вызвать через "\
-            + str(COOLDOWN - (datetime.datetime.now() - last_command_use_time).seconds) + " секунд")
+            received_answer = await get_answer()
+            for x in range(0, len(received_answer), 4096):
+                await message.answer(received_answer[x:x+4096])
+        except:
+            context[message.from_user.id] = DEFAULT_DATE
+            await message.answer("Произошла какая-то ошибка!\nПожалуйста, пробуйте снова")
+        
+    else:
+        await message.answer("Пожалуйста, пожалейте сервер!\nПерерыв между запросами "\
+        + str(COOLDOWN) + " секунд\nМожно вызвать через "\
+        + str(COOLDOWN - (datetime.datetime.now() - last_command_use_time).seconds) + " секунд")
 
 
 
