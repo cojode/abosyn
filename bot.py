@@ -1,5 +1,4 @@
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.dispatcher.filters import Text
 import datetime
 import recipe_model
 
@@ -32,6 +31,12 @@ def check_id_in_context(uid):
         context[uid] = DEFAULT_DATE
     return context[uid]
 
+
+
+def user_spy(message, text):
+    print("\n  ", datetime.datetime.now(), "-", message.from_user.first_name,\
+          "id:", message.from_user.id, "-", text, "\n")
+
     
     
 async def get_answer():
@@ -57,6 +62,8 @@ async def get_messages(message:types.Message):
     
     if (datetime.datetime.now() - last_command_use_time).seconds > COOLDOWN:
         context[message.from_user.id] = datetime.datetime.now()
+        
+        user_spy(message, "generating recipe")
         
         try:
             await message.answer("Ваш рецепт генерируется...")
