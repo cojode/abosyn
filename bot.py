@@ -34,7 +34,7 @@ def check_id_in_context(uid):
 
 
 def user_spy(message, text):
-    print("\n  ", datetime.datetime.now(), "-", message.from_user.first_name,\
+    print("\n  ", datetime.datetime.now(), "-", message.from_user.first_name, message.from_user.username,\
           "id:", message.from_user.id, "-", text, "\n")
 
     
@@ -73,7 +73,7 @@ async def get_messages(message:types.Message):
                 await message.answer(received_answer[x:x+4096])
         except:
             context[message.from_user.id] = DEFAULT_DATE
-            await message.answer("Произошла какая-то ошибка!\nПожалуйста, пробуйте снова")
+            await message.answer("Произошла какая-то ошибка!\nПожалуйста, попробуйте снова")
         
     else:
         await message.answer("Пожалуйста, пожалейте сервер!\nПерерыв между запросами "\
