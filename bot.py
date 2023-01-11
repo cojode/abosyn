@@ -3,7 +3,7 @@ import datetime
 import recipe_model
 
 
-bot = Bot(token="5972708010:AAEqHwGxhzlufz0EdvtUa2s-E9lFUk-zjc0")
+bot = Bot(token="5630181620:AAGXhu456jVYzjyRDN3f66pXIS7gBFZLkhE")
 dp = Dispatcher(bot)
 
 
@@ -41,10 +41,13 @@ async def get_messages(message):
             
             await message.answer("Ваш рецепт генерируется...")
             
-            received_answer = await get_answer()
-            
-            for x in range(0, len(received_answer), 4096):
-                await message.answer(received_answer[x:x+4096])
+            try:
+                received_answer = await get_answer()
+                for x in range(0, len(received_answer), 4096):
+                    await message.answer(received_answer[x:x+4096])
+            except:
+                context[message.from_user.id] = datetime.datetime(2010,1,1, 0, 0, 0)
+                await message.answer("Произошла какая-то ошибка!\nПожалуйста, пробуйте снова")
             
         else:
             await message.answer("Пожалуйста, пожалейте сервер!\nПерерыв между запросами "\
