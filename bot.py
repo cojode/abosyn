@@ -11,7 +11,6 @@ rp = recipe_model.RecipeModel("havai/awesome_recipes")
 config = ConfigLoader()
   
 settings = config.get_section("bot_settings")
-lits = config.get_section("bot_str_literals")
 
 bot = Bot(token=settings["token"])
 dp = Dispatcher(bot)
@@ -37,7 +36,8 @@ def check_context_uptime():
 
 
 def user_spy(message, text):
-    lits = config.get_section("bot_str_literals", True)
+    config.update()
+    lits = config.get_section("bot_str_literals")
     
     print(lits["log_mes"]\
     % {"time": datetime.datetime.now(), "name": message.from_user.first_name,\
@@ -53,6 +53,9 @@ async def get_answer():
     return lits["pecipe_first"] + rp.generate_recipe(max_length=settings["max_length"])
 
 def update_keyboard():
+    config.update()
+    lits = config.get_section("bot_str_literals")
+    
     keyboard = types.ReplyKeyboardMarkup(
         keyboard=[[types.KeyboardButton(text=lits["gen_com"])],],
         resize_keyboard=True,
@@ -64,7 +67,8 @@ def update_keyboard():
 
 @dp.message_handler(commands=["start", "help"])
 async def get_help(message:types.Message):
-    lits = config.get_section("bot_str_literals", True)
+    config.update()
+    lits = config.get_section("bot_str_literals")
     
     keyboard = update_keyboard()
     
@@ -72,7 +76,7 @@ async def get_help(message:types.Message):
                         % {"com": lits["gen_com"].lower()},\
                         reply_markup=keyboard)
 
-@dp.message_handler(lambda message: message.text.lower() == lits["gen_com"].lower())
+@dp.message_handler(lambda message: message.text.lower() == config.get_section("bot_str_literals")["gen_com"].lower())
 async def get_messages(message:types.Message):
     config.update()
     settings = config.get_section("bot_settings")
@@ -90,18 +94,19 @@ async def get_messages(message:types.Message):
         user_spy(message, "generating recipe")
         
         try:
-            await message.answer(lits["waiting_gen"])
+            await message.answer(lits["waiting_gen"], reply_markup=keyboard)
             
             received_answer = await get_answer()
             for x in range(0, len(received_answer), 4096):
-                await message.answer(received_answer[x:x+4096])
+                await message.answer(received_answer[x:x+4096], reply_markup=keyboard)
         except:
             context[message.from_user.id] = DEFAULT_DATE
-            await message.answer(lits["error_mes"])
+            await message.answer(lits["error_mes"], reply_markup=keyboard)
         
     else:
         await message.answer(lits["delay_mes"]\
-        % {"delay": settings["delay"], "left": settings["delay"] - (datetime.datetime.now() - last_command_use_time).seconds})
+        % {"delay": settings["delay"], "left": settings["delay"] - (datetime.datetime.now() - last_command_use_time).seconds},\
+                reply_markup=keyboard)
 
 
 
