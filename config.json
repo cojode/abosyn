@@ -26,7 +26,7 @@
   },
   "bot_settings": {
     "token": "aboba",
-    "delay": 67,
+    "delay": 67
   },
   "bot_str_literals": {
     "gen_com": "Рецепт",
