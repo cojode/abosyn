@@ -1,18 +1,18 @@
 from aiogram import Bot, Dispatcher, executor, types
 import datetime
+import json
 import recipe_model
 
 
 
 #в конфиге токен и время кулдауна
-config_read = open("config", "r")
-config = config_read.read().split()
-config_read.close()
+with open("config.json") as f:
+    config = json.load(f)
 
-bot = Bot(token=config[0])
+bot = Bot(token=config["token"])
 dp = Dispatcher(bot)
 
-COOLDOWN = int(config[1])
+COOLDOWN = config["delay"]
 DEFAULT_DATE = datetime.datetime(2010,1,1, 0, 0, 0)
 
 
