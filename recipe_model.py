@@ -15,9 +15,8 @@ class RecipeModel:
         self.model = GPT2LMHeadModel.from_pretrained(
             model_name, config=self.config).to(DEVICE)
 
-        text = "[START]"
         self.input_ids = self.tokenizer.encode(
-            text, return_tensors="pt").to(DEVICE)
+            "[START]", return_tensors="pt").to(DEVICE)
         self.model.eval()
 
     def generate_recipe(self, max_length=1000):
@@ -36,10 +35,6 @@ class RecipeModel:
         return generated_text[:generated_text.rfind(".") + 1]
 
 
-def main():
+if __name__ == '__main__':
     rp = RecipeModel("havai/awesome_recipes_exp")
     print(rp.generate_recipe(max_length=1000))
-
-
-if __name__ == '__main__':
-    main()
