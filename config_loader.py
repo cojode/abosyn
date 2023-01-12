@@ -8,7 +8,7 @@ class ConfigLoader:
         self.update()
 
     def update(self) -> None:
-        with open(self.config_src) as f:
+        with open(self.config_src, encoding="utf-8") as f:
             self.config_json = json.load(f)
 
     def get_section(self, section: str, update=False) -> dict:
