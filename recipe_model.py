@@ -31,11 +31,13 @@ class RecipeModel:
 
         generated_text = list(map(self.tokenizer.decode, out))[0]
 
-        return generated_text[generated_text.find("[START]") + len("[START]"):generated_text.find("[END]")]
+        generated_text = generated_text[generated_text.find(
+            "[START]") + len("[START]"):generated_text.find("[END]")]
+        return generated_text[:generated_text.rfind(".") + 1]
 
 
 def main():
-    rp = RecipeModel("havai/awesome_recipes")
+    rp = RecipeModel("havai/awesome_recipes_exp")
     print(rp.generate_recipe(max_length=1000))
 
 
