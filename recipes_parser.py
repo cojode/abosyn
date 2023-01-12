@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import urllib3
 from multiprocessing import Pool
+from config_loader import ConfigLoader
 
 
 def parse_recipes(seed) -> None:
@@ -25,8 +26,10 @@ def mp_parsing(parse_func: function, seed_range: range, p_count: int) -> None:
 
 
 if __name__ == '__main__':
-    start_index = 10000
-    end_index = 11000
-    number_of_processes = 16
+    cl = ConfigLoader()
+    parser_settings = cl.get_section("parser_settings")
+    start_index = int(parser_settings["start_index"])
+    end_index = int(parser_settings["end_index"])
+    number_of_processes = int(parser_settings["number_of_processes"])
     mp_parsing(parse_recipes, range(
         start_index, end_index), number_of_processes)

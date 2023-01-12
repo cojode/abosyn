@@ -1,17 +1,41 @@
 {
-	"bot_settings": {
-		"token": "5630181620:AAFt_RplXq2yCmLrwf6_K7KmpUvV67AHzRY", 
-		"delay": 67,
-		"max_length": 1000
-	},
-	"bot_str_literals": {
-		"gen_com": "Рецепт",
-		"help_mes": "Напишите \"%(com)s\" для генерации рецепта",
-		"pecipe_first": "Ваш рецепт:\n\n",
-		"waiting_gen": "Ваш рецепт генерируется...",
-		"error_mes": "Произошла какая-то ошибка!\nПожалуйста, попробуйте снова",
-		"delay_mes": "Пожалуйста, пожалейте сервер!\nПерерыв между запросами %(delay)s секунд\nМожно вызвать через %(left)s секунд",
-		"log_mes": "\n   %(time)s - %(name)s %(nick)s id%(id)s - %(text)s\n",
-		"input_place": "Я вас люблю"
-	}
+  "parser_settings": {
+    "start_index": 10000,
+    "end_index": 11000,
+    "number_of_processes": 16
+  },
+  "train_settings": {
+    "tokenizer_model_name": "sberbank-ai/rugpt3small_based_on_gpt2",
+    "dataset_src": "data/recipes.txt",
+    "train_args": {
+      "output_dir": "RecipeModel",
+      "overwrite_output_dir": true,
+      "num_train_epochs": 10,
+      "per_device_train_batch_size": 8,
+      "per_device_eval_batch_size": 8,
+      "gradient_accumulation_steps": 8,
+      "warmup_steps": 0,
+      "save_steps": 7230,
+      "logging_steps": 20
+    }
+  },
+  "model_settings": {
+    "model_name": "",
+    "recipe_prefix": "havai/awesome_recipes_exp"
+  },
+  "bot_settings": {
+    "token": "aboba",
+    "delay": 67,
+    "max_length": 1000
+  },
+  "str_literals": {
+    "gen_com": "Рецепт",
+    "help_mes": "Напишите \"%(com)s\" для генерации рецепта",
+    "pecipe_first": "Ваш рецепт:\n\n",
+    "waiting_gen": "Ваш рецепт генерируется...",
+    "error_mes": "Произошла какая-то ошибка!\nПожалуйста, попробуйте снова",
+    "delay_mes": "Пожалуйста, пожалейте сервер!\nПерерыв между запросами %(delay)s секунд\nМожно вызвать через %(left)s секунд",
+    "log_mes": "\n   %(time)s - %(name)s %(nick)s id%(id)s - %(text)s\n",
+    "input_place": "Я вас люблю"
+  }
 }

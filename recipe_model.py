@@ -1,12 +1,13 @@
 import torch
 from transformers import (AutoConfig, AutoModelForSequenceClassification,
                           AutoTokenizer, GPT2LMHeadModel, GPT2Tokenizer)
+from config_loader import ConfigLoader
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class RecipeModel:
-    def __init__(self, model_name):
+    def __init__(self, model_name: str, recipe_prefix=""):
         self.model_name = model_name
         self.config = AutoConfig.from_pretrained(model_name)
 
@@ -16,7 +17,7 @@ class RecipeModel:
             model_name, config=self.config).to(DEVICE)
 
         self.input_ids = self.tokenizer.encode(
-            "[START]", return_tensors="pt").to(DEVICE)
+            f"[START]{recipe_prefix}", return_tensors="pt").to(DEVICE)
         self.model.eval()
 
     def generate_recipe(self, max_length=1000):
@@ -36,5 +37,9 @@ class RecipeModel:
 
 
 if __name__ == '__main__':
-    rp = RecipeModel("havai/awesome_recipes_exp")
+    cl = ConfigLoader()
+    model_settings = cl.get_section("model_settings")
+    recipe_prefix = model_settings["recipe_prefix"]
+    model_name = "havai/awesome_recipes_exp"
+    rp = RecipeModel(model_name, recipe_prefix)
     print(rp.generate_recipe(max_length=1000))
