@@ -1,4 +1,17 @@
 {
-  "token": "5630181620:AAGXhu456jVYzjyRDN3f66pXIS7gBFZLkhE", 
-  "delay": 67
+	"settings": {
+		"token": "5630181620:AAGXhu456jVYzjyRDN3f66pXIS7gBFZLkhE", 
+		"delay": 67,
+		"max_length": 1000
+	},
+	"str_literals": {
+		"gen_com": "Рецепт",
+		"help_mes": "Напишите \"%(com)s\" для генерации рецепта",
+		"pecipe_first": "Ваш рецепт:\n\n",
+		"waiting_gen": "Ваш рецепт генерируется...",
+		"error_mes": "Произошла какая-то ошибка!\nПожалуйста, попробуйте снова",
+		"delay_mes": "Пожалуйста, пожалейте сервер!\nПерерыв между запросами %(delay)s секунд\nМожно вызвать через %(left)s секунд",
+		"log_mes": "\n   %(time)s - %(name)s %(nick)s id%(id)s - %(text)s\n",
+		"input_place": "Я вас люблю"
+	}
 }
