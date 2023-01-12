@@ -42,4 +42,4 @@ if __name__ == '__main__':
     recipe_prefix = model_settings["recipe_prefix"]
     model_name = model_settings["model_name"]
     rp = RecipeModel(model_name, recipe_prefix)
-    print(rp.generate_recipe(max_length=1000))
+    print(rp.generate_recipe())
