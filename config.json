@@ -1,10 +1,10 @@
 {
-	"settings": {
-		"token": "5630181620:AAGXhu456jVYzjyRDN3f66pXIS7gBFZLkhE", 
+	"bot_settings": {
+		"token": "5630181620:AAFt_RplXq2yCmLrwf6_K7KmpUvV67AHzRY", 
 		"delay": 67,
 		"max_length": 1000
 	},
-	"str_literals": {
+	"bot_str_literals": {
 		"gen_com": "Рецепт",
 		"help_mes": "Напишите \"%(com)s\" для генерации рецепта",
 		"pecipe_first": "Ваш рецепт:\n\n",
