@@ -3,6 +3,7 @@ from transformers import (AutoConfig, AutoModelForSequenceClassification,
                           AutoTokenizer, GPT2LMHeadModel, GPT2Tokenizer)
 from config_loader import ConfigLoader
 
+# Выбирается устройство - видеокарта если она доступна, или процессор
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
