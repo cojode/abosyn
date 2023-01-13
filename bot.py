@@ -1,17 +1,38 @@
-import datetime
-
-import recipe_model
 from aiogram import Bot, Dispatcher, executor, types
+import datetime
 from config_loader import ConfigLoader
-
-rp = recipe_model.RecipeModel("havai/awesome_recipes")
+import recipe_model
+import logging
 
 config = ConfigLoader()
 
 settings = config.get_section("bot_settings")
 
+log_format = settings["log_format"]
+formatter = logging.Formatter(log_format)
+
+console_logger = logging.StreamHandler()
+console_logger.setFormatter(formatter)
+
+log_file = settings["log_file"]
+file_logger = logging.FileHandler(log_file)
+file_logger.setFormatter(formatter)
+
+log_level = settings["log_level"]
+logger = logging.getLogger()
+logger.addHandler(console_logger)
+logger.addHandler(file_logger)
+logger.setLevel(log_level * 10)
+
+logger.info("Config loaded")
+logger.info("Loading model...")
+rp = recipe_model.RecipeModel("havai/awesome_recipes")
+logger.info("Model loaded")
+
 bot = Bot(token=settings["token"])
+logger.info("Bot login succesful")
 dp = Dispatcher(bot)
+
 
 context = {}
 context_uptime = datetime.datetime.now()
@@ -32,15 +53,6 @@ def check_context_uptime():
         context_uptime = datetime.datetime.now()
 
 
-def user_spy(message, text):
-    config.update()
-    lits = config.get_section("bot_str_literals")
-
-    print(lits["log_mes"]
-          % {"time": datetime.datetime.now(), "name": message.from_user.first_name, "nick": message.from_user.username,
-             "id": message.from_user.id, "text": text})
-
-
 async def get_answer():
     config.update()
     settings = config.get_section("bot_settings")
@@ -54,7 +66,7 @@ def update_keyboard():
     lits = config.get_section("bot_str_literals")
 
     keyboard = types.ReplyKeyboardMarkup(
-        keyboard=[[types.KeyboardButton(text=lits["gen_com"])], ],
+        keyboard=[[types.KeyboardButton(text=lits["gen_com"])],],
         resize_keyboard=True,
         input_field_placeholder=lits["input_place"]
     )
@@ -88,22 +100,27 @@ async def get_messages(message: types.Message):
     if (datetime.datetime.now() - last_command_use_time).seconds > settings["delay"]:
         context[message.from_user.id] = datetime.datetime.now()
 
-        user_spy(message, "generating recipe")
+        logger.info("Generating recipe...")
+        logger.info("Sender info: " % {
+            "name": message.from_user.first_name,
+            "nick": message.from_user.username,
+            "id": message.from_user.id
+        }
+        )
 
         try:
             await message.answer(lits["waiting_gen"], reply_markup=keyboard)
 
             received_answer = await get_answer()
             for x in range(0, len(received_answer), 4096):
-                await message.answer(received_answer[x:x + 4096], reply_markup=keyboard)
+                await message.answer(received_answer[x:x+4096], reply_markup=keyboard)
         except:
             context[message.from_user.id] = DEFAULT_DATE
             await message.answer(lits["error_mes"], reply_markup=keyboard)
 
     else:
         await message.answer(lits["delay_mes"]
-                             % {"delay": settings["delay"],
-                                "left": settings["delay"] - (datetime.datetime.now() - last_command_use_time).seconds},
+                             % {"delay": settings["delay"], "left": settings["delay"] - (datetime.datetime.now() - last_command_use_time).seconds},
                              reply_markup=keyboard)
 
 
