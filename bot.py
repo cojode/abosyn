@@ -40,9 +40,19 @@ context_uptime = datetime.datetime.now()
 DEFAULT_DATE = datetime.datetime(2010, 1, 1, 0, 0, 0)
 
 
+def log_with_user_info(text, message: types.Message):
+    logger.info(str(text) + " | User info: %(name)s %(nick)s id%(id)s" % {
+            "name": message.from_user.first_name,
+            "nick": message.from_user.username,
+            "id": message.from_user.id
+        }
+    )
+
+
 def check_id_in_context(uid):
     if uid not in context:
         context[uid] = DEFAULT_DATE
+        logger.info("Id " + str(uid) + " added to user base")
     return context[uid]
 
 
@@ -51,6 +61,7 @@ def check_context_uptime():
     if (datetime.datetime.now() - context_uptime).seconds > 3600:
         context = {}
         context_uptime = datetime.datetime.now()
+        logger.info("User base cleaned")
 
 
 async def get_answer():
@@ -77,12 +88,13 @@ def update_keyboard():
 async def get_help(message: types.Message):
     config.update()
     lits = config.get_section("bot_str_literals")
-
+    
     keyboard = update_keyboard()
-
+    
     await message.answer(lits["help_mes"]
                          % {"com": lits["gen_com"].lower()},
                          reply_markup=keyboard)
+    log_with_user_info("Help received", message)
 
 
 @dp.message_handler(lambda message: message.text.lower() == config.get_section("bot_str_literals")["gen_com"].lower())
@@ -100,29 +112,31 @@ async def get_messages(message: types.Message):
     if (datetime.datetime.now() - last_command_use_time).seconds > settings["delay"]:
         context[message.from_user.id] = datetime.datetime.now()
 
-        logger.info("Generating recipe...")
-        logger.info("Sender info: " % {
-            "name": message.from_user.first_name,
-            "nick": message.from_user.username,
-            "id": message.from_user.id
-        }
-        )
-
+        await message.answer(lits["waiting_gen"], reply_markup=keyboard)
+        log_with_user_info("Generating recipe...", message)
+        
         try:
-            await message.answer(lits["waiting_gen"], reply_markup=keyboard)
-
             received_answer = await get_answer()
-            for x in range(0, len(received_answer), 4096):
-                await message.answer(received_answer[x:x+4096], reply_markup=keyboard)
+            log_with_user_info("Recipe successfully generated", message)
         except:
             context[message.from_user.id] = DEFAULT_DATE
             await message.answer(lits["error_mes"], reply_markup=keyboard)
+            log_with_user_info("Generation error!", message)
+            return
+        
+        for x in range(0, len(received_answer), 4096):
+            await message.answer(received_answer[x:x+4096], reply_markup=keyboard)
+        log_with_user_info("Recipe received", message)
+
 
     else:
         await message.answer(lits["delay_mes"]
                              % {"delay": settings["delay"], "left": settings["delay"] - (datetime.datetime.now() - last_command_use_time).seconds},
                              reply_markup=keyboard)
+        log_with_user_info("Delay stopped spamer", message)
 
 
 if __name__ == "__main__":
+    logger.info("Starting polling...")
     executor.start_polling(dp, skip_updates=True)
+    
