@@ -40,7 +40,7 @@ context_uptime = datetime.datetime.now()
 DEFAULT_DATE = datetime.datetime(2010, 1, 1, 0, 0, 0)
 
 
-def log_with_user_info(text, message: types.Message):
+def log_with_user_info(text, message: types.Message) -> None:
     logger.info(str(text) + " | User info: %(name)s %(nick)s id%(id)s" % {
             "name": message.from_user.first_name,
             "nick": message.from_user.username,
@@ -56,7 +56,7 @@ def check_id_in_context(uid):
     return context[uid]
 
 
-def check_context_uptime():
+def check_context_uptime() -> None:
     global context_uptime
     if (datetime.datetime.now() - context_uptime).seconds > 3600:
         context = {}
@@ -64,7 +64,7 @@ def check_context_uptime():
         logger.info("User base cleaned")
 
 
-async def get_answer():
+async def get_answer() -> str:
     config.update()
     settings = config.get_section("bot_settings")
     lits = config.get_section("bot_str_literals")
