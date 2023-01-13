@@ -7,6 +7,7 @@ import logging
 config = ConfigLoader()
 
 settings = config.get_section("bot_settings")
+model_settings = config.get_section("model_settings")
 
 log_format = settings["log_format"]
 formatter = logging.Formatter(log_format)
@@ -26,7 +27,7 @@ logger.setLevel(log_level * 10)
 
 logger.info("Config loaded")
 logger.info("Loading model...")
-rp = recipe_model.RecipeModel("havai/awesome_recipes")
+rp = recipe_model.RecipeModel(model_settings["model_name"])
 logger.info("Model loaded")
 
 bot = Bot(token=settings["token"])
