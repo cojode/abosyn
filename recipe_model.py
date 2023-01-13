@@ -7,6 +7,7 @@ from config_loader import ConfigLoader
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
+# Класс генерации рецептов из уже обученной нейросети
 class RecipeModel:
     def __init__(self, model_name: str, recipe_prefix=""):
         self.model_name = model_name
