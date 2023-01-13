@@ -11,12 +11,11 @@ def parse_recipes(seed) -> None:
     with open("data/recipes.txt", "a", encoding="utf-8") as f:
         response = http.request('GET', url + str(seed))
         soup = BeautifulSoup(response.data)
-        steps = soup.find_all(
-            'p', {"class": "instruction"})
-        if (len(steps) > 0):
+        steps = soup.find_all('p', {"class": "instruction"})
+        if len(steps) > 0:
             steps = list(map(lambda step: step.text, steps))
-            format = f"[START] {'\n'.join(steps)} [END]\n"
-            f.write(format)
+            my_format = f"[START] {chr(10).join(steps)} [END]\n"  # chr(10) для '\n', во избежание ошибки
+            f.write(my_format)
             counter += 1
 
 
@@ -31,5 +30,4 @@ if __name__ == '__main__':
     start_index = int(parser_settings["start_index"])
     end_index = int(parser_settings["end_index"])
     number_of_processes = int(parser_settings["number_of_processes"])
-    mp_parsing(parse_recipes, range(
-        start_index, end_index), number_of_processes)
+    mp_parsing(parse_recipes, range(start_index, end_index), number_of_processes)
