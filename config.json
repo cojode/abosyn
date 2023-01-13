@@ -1,7 +1,7 @@
 {
   "parser_settings": {
     "start_index": 10000,
-    "end_index": 11000,
+    "end_index": 20000,
     "number_of_processes": 16
   },
   "train_settings": {
@@ -27,7 +27,10 @@
   "bot_settings": {
     "token": "aboba",
     "delay": 67,
-    "max_length": 1000
+    "max_length": 1000,
+    "log_file": "logs.txt",
+    "log_format": "[%(asctime)s] [%(levelname)s]: %(message)s",
+    "log_level": 2
   },
   "bot_str_literals": {
     "gen_com": "Рецепт",
