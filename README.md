@@ -11,7 +11,7 @@
 
 ## Структура проекта
 
-+ ### [Telegram Bot]
++ ### Telegram Bot
   + [bot.py](https://github.com/cojode/abosyn/blob/main/bot.py) - запуск бота
   + [config.json](https://github.com/cojode/abosyn/blob/main/config.json) - конфиг
   + [config_loader.py](https://github.com/cojode/abosyn/blob/main/config_loader.py) - класс для загрузки и обновлений конфига в процессе работы
